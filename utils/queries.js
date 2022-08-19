@@ -1,4 +1,10 @@
+// get the database connection
+const inquirer = require('inquirer');
 const db = require('./connection');
+// get questions from prompts.js
+const {
+    mainMenu,
+    newDeptMenu } = require('./prompts');
 
 // validate user input string
 const validateString = (input) => {
@@ -31,8 +37,9 @@ const showDepartments = () => {
             console.error(err);
         };
 
-        console.log('');
+        console.log(`\n`);
         console.table(results);
+        console.log(`\n\n\n\n\n\n\n\n`);
     });
 };
 
@@ -50,9 +57,10 @@ const showRoles = () => {
         if (err) {
             console.error(err);
         };
-            
-        console.log('');
+
+        console.log(`\n`);
         console.table(results);
+        console.log(`\n\n\n\n\n\n\n\n`);
     });
 };
 
@@ -76,28 +84,36 @@ const showEmployees = () => {
         if (err) {
             console.error(err);
         };
-            
-        console.log('');
+
+        console.log(`\n`);
         console.table(results);
+        console.log(`\n\n\n\n\n\n\n\n`);
     });
 };
 
 // add a department
-const addDepartment = (deptName) => {
-    // if (!validateString(deptName)) {
-    //     return false;
-    // };
+const addDepartment = () => {
+    inquirer
+        .prompt(newDeptMenu)
+        .then((answer) => {
+            let deptName = answer.deptName;
 
-    const sql = `INSERT INTO departments (name)
+            const sql = `INSERT INTO departments (name)
                 VALUES (?)`;
 
-    db.query(sql, deptName, (err, results) => {
-        if (err) {
-            console.error(err);
-        };
+            db.query(sql, deptName, (err, results) => {
+                if (err) {
+                    console.error(err);
+                };
+            });
 
-        console.log(`Added department ${deptName}.`);
-    });   
+            console.log(`\n`);
+            console.log(`Added department ${deptName}.`);
+            console.log(`\n\n\n\n\n\n\n\n`);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 };
 
 // add a role
