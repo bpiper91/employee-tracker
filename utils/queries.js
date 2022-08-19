@@ -1,5 +1,24 @@
 const db = require('./connection');
 
+// validate user input string
+const validateString = (input) => {
+    if (input.includes(';')) {
+        return false;
+    } else {
+        return true;
+    };
+};
+
+// validate user input array
+const validateArray = (inputArr) => {
+    newArr = inputArr.filter(validateString);
+    if (newArr.length !== inputArr.length) {
+        return false;
+    } else {
+        return true;
+    };
+};
+
 // view all departments
 const showDepartments = () => {
     const sql = `SELECT 
@@ -12,6 +31,7 @@ const showDepartments = () => {
             console.error(err);
         };
 
+        console.log('');
         console.table(results);
     });
 };
@@ -31,7 +51,8 @@ const showRoles = () => {
             console.error(err);
         };
             
-         console.table(results);
+        console.log('');
+        console.table(results);
     });
 };
 
@@ -56,8 +77,96 @@ const showEmployees = () => {
             console.error(err);
         };
             
-         console.table(results);
+        console.log('');
+        console.table(results);
     });
 };
 
-module.exports = { showDepartments, showRoles, showEmployees };
+// add a department
+const addDepartment = (deptName) => {
+    // if (!validateString(deptName)) {
+    //     return false;
+    // };
+
+    const sql = `INSERT INTO departments (name)
+                VALUES (?)`;
+
+    db.query(sql, deptName, (err, results) => {
+        if (err) {
+            console.error(err);
+        };
+
+        console.log(`Added department ${deptName}.`);
+    });   
+};
+
+// add a role
+const addRole = (roleArr) => {
+    // if (!validateArray(roleArr)) {
+    //     return false;
+    // } else if (!roleArr[0] || !roleArr[1]) {
+    //     return false;
+    // };
+
+    const sql = `INSERT INTO roles (title, salary, department_id)
+                VALUES (?, ?, ?)`;
+
+    db.query(sql, roleArr, (err, results) => {
+        if (err) {
+            console.error(err);
+        };
+
+        console.log(`Added role ${roleArr[0]}.`);
+    });
+};
+
+// add an employee
+const addEmployee = (employeeArr) => {
+    // if (!validateArray(employeeArr)) {
+    //     return false;
+    // } else if (!employeeArr[0] || !employeeArr[1] || !employeeArr[2]) {
+    //     return false;
+    // };
+
+    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id, department_id)
+                VALUES (?, ?, ?, ?, ?)`;
+
+    db.query(sql, employeeArr, (err, results) => {
+        if (err) {
+            console.error(err);
+        };
+
+        console.log(`Added employee ${employeeArr[0]} ${employeeArr[1]}.`);
+    });
+};
+
+// update an employee role
+const updateRole = (roleUpdateArr) => {
+    // if (!validateArray(roleUpdateArr)) {
+    //     return false;
+    // } else if (!roleUpdateArr[0] || !roleUpdateArr[1]) {
+    //     return false;
+    // };
+
+    const sql = `UPDATE employees
+                SET role_id = ?
+                WHERE id = ?`;
+
+    db.query(sql, roleUpdateArr, (err, results) => {
+        if (err) {
+            console.error(err);
+        };
+
+        console.log(`Changed employee's role.`);
+    });
+};
+
+module.exports = {
+    showDepartments,
+    showRoles,
+    showEmployees,
+    addDepartment,
+    addRole,
+    addEmployee,
+    updateRole
+};
