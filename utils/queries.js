@@ -103,13 +103,14 @@ async function showEmployees() {
                 roles.title AS Title,
                 departments.name AS Department,
                 roles.salary AS Salary,
-                COALESCE(CONCAT(m.first_name, ' ', m.last_name),'No Manager') AS Manager
+                COALESCE(CONCAT(m.first_name, ' ', m.last_name),'None') AS Manager
                 FROM employees e
                 LEFT JOIN roles
                 ON e.role_id = roles.id
                 LEFT JOIN departments
                 ON e.department_id = departments.id
-                INNER JOIN employees m ON e.manager_id = m.id`;
+                LEFT JOIN employees m
+                ON e.manager_id = m.id`;
 
     const [rows, fields] = await db.execute(sql);
     console.log(`\n`);
