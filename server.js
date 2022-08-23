@@ -12,11 +12,13 @@ const {
 const {
     showDepartments,
     showRoles,
-    showEmployees,
+    showEmployees } = require('./utils/queries');
+
+const {
     addDepartment,
     addRole,
     addEmployee,
-    updateRole } = require('./utils/queries');
+    updateRole } = require('./utils/sync_queries');
 
 // prompt user
 const promptMenu = () => {
@@ -109,23 +111,25 @@ async function promptData(selection) {
 
     // if the user will need to choose an employee, get the employees list
     if (selection.menuChoice === 'addEmployee' || selection.menuChoice === 'updateRole') {
+        
         // get list of employees
         let empChoices = [];
 
-        const sqlEmp = `SELECT 
+        var sql = `SELECT 
         CONCAT(first_name, " ", last_name) AS Employee,
         id AS ID 
         FROM employees`;
 
-        let emps = [];
+        const [rows, fields] = await db.execute(sql);
+        let emps = rows;
 
-        db.query(sqlEmp, (err, rows) => {
-            if (err) {
-                console.error(err);
-            };
+        // db.query(sqlEmp, (err, rows) => {
+        //     if (err) {
+        //         console.error(err);
+        //     };
 
-            emps = rows;
-        });
+        //     emps = rows;
+        // });
 
         // create array of employee names and ids
         for (i = 0; i < emps.length; i++) {
@@ -139,6 +143,14 @@ async function promptData(selection) {
 
         // add employee_id question to chooseMenu, with appropriate text
         if (selection.menuChoice === 'addEmployee') {
+            // add 'no manager' option
+            let noManagerObj = {
+                name: 'This employee has no manager.',
+                value: 'none'
+            };
+            
+            empChoices.push(noManagerObj);
+
             chooseMenu.push(
                 {
                     type: 'list',
@@ -164,20 +176,21 @@ async function promptData(selection) {
         // get list of roles
         let roleChoices = [];
 
-        const sqlRole = `SELECT 
+        var sql = `SELECT 
         title AS Role,
         id AS ID 
         FROM roles`;
 
-        let roles = [];
+        const [rows, fields] = await db.execute(sql);
+        let roles = rows;
 
-        db.query(sqlRole, (err, rows) => {
-            if (err) {
-                console.error(err);
-            };
+        // db.query(sqlRole, (err, rows) => {
+        //     if (err) {
+        //         console.error(err);
+        //     };
 
-            roles = rows;
-        });
+        //     roles = rows;
+        // });
 
         // create array of role titles and ids
         for (i = 0; i < roles.length; i++) {
@@ -324,9 +337,12 @@ const dbAction = action => {
                     action.first_name,
                     action.last_name,
                     action.role_id,
-                    action.manager_id,
                     action.department_id
                 ];
+
+                if (action.manager_id !== 'none') {
+                    array.push(action.manager_id);
+                };
                 addEmployee(array);
                 return true;
         };
@@ -347,9 +363,4 @@ promptMenu();
 
 
 //  REMAINING PROBLEM: 
-//      1. DB queries happen async, so choice lists are undefined
-//          (affects add role, add employee, and update role)
-//          await solution works, just needs adding to promptData
-//      2. final db query not logging completed message in queries.js
-//          probably related to database not sending data back
-//          maybe they shouldn't be async functions
+//      1. employees with null managers aren't being shown

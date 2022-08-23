@@ -1,7 +1,5 @@
 // get the database connection
 const mysql = require('mysql2/promise');
-// const conn = require('./connection');
-// const db = require('./connection');
 
 // validate user input string
 const validateString = (input) => {
@@ -105,7 +103,7 @@ async function showEmployees() {
                 roles.title AS Title,
                 departments.name AS Department,
                 roles.salary AS Salary,
-                CONCAT(m.first_name, ' ', m.last_name) AS Manager
+                COALESCE(CONCAT(m.first_name, ' ', m.last_name),'No Manager') AS Manager
                 FROM employees e
                 LEFT JOIN roles
                 ON e.role_id = roles.id
@@ -119,117 +117,11 @@ async function showEmployees() {
     console.log(`\n\n\n\n\n\n\n\n`);
 };
 
-// add a department
-async function addDepartment(deptName) {
-    // Connect to database
-    const db = await mysql.createConnection(
-        {
-            'host': 'localhost',
-            'user': 'root',
-            'database': 'company'
-        },
-        console.log("Database connection established. Using database 'company'.")
-    );
 
-    const sql = `INSERT INTO departments (name)
-                VALUES (?)`;
-
-    const [rows, fields] = await db.execute(sql);
-
-    // db.query(sql, deptName, (err, results) => {
-    //     if (err) {
-    //         console.error(err);
-    //     };
-    // });
-
-    console.log(`\n`);
-    console.log(`Added department ${deptName}.`);
-    console.log(`\n`);
-};
-
-// add a role
-async function addRole(roleArr) {
-    // Connect to database
-    const db = await mysql.createConnection(
-        {
-            'host': 'localhost',
-            'user': 'root',
-            'database': 'company'
-        },
-        console.log("Database connection established. Using database 'company'.")
-    );
-
-    // if (!validateArray(roleArr)) {
-    //     return false;
-    // } else if (!roleArr[0] || !roleArr[1]) {
-    //     return false;
-    // };
-
-    const sql = `INSERT INTO roles (title, salary, department_id)
-                VALUES (?, ?, ?)`;
-
-    const [rows] = await db.execute(sql);
-    console.log(`Added role ${roleArr[0]}.`);
-};
-
-// add an employee
-async function addEmployee(employeeArr) {
-    // Connect to database
-    const db = await mysql.createConnection(
-        {
-            'host': 'localhost',
-            'user': 'root',
-            'database': 'company'
-        },
-        console.log("Database connection established. Using database 'company'.")
-    );
-
-    // if (!validateArray(employeeArr)) {
-    //     return false;
-    // } else if (!employeeArr[0] || !employeeArr[1] || !employeeArr[2]) {
-    //     return false;
-    // };
-
-    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id, department_id)
-                VALUES (?, ?, ?, ?, ?)`;
-
-    const [rows, fields] = await db.execute(sql);
-    console.log(`Added employee ${employeeArr[0]} ${employeeArr[1]}.`);
-};
-
-// update an employee role
-async function updateRole(roleUpdateArr) {
-    // Connect to database
-    const db = await mysql.createConnection(
-        {
-            'host': 'localhost',
-            'user': 'root',
-            'database': 'company'
-        },
-        console.log("Database connection established. Using database 'company'.")
-    );
-
-    // if (!validateArray(roleUpdateArr)) {
-    //     return false;
-    // } else if (!roleUpdateArr[0] || !roleUpdateArr[1]) {
-    //     return false;
-    // };
-
-    const sql = `UPDATE employees
-                SET role_id = ?
-                WHERE id = ?`;
-
-    const [rows, fields] = await db.execute(sql);
-    console.log(`Changed employee's role.`);
-};
 
 module.exports = {
     validateString,
     showDepartments,
     showRoles,
-    showEmployees,
-    addDepartment,
-    addRole,
-    addEmployee,
-    updateRole
+    showEmployees
 };
