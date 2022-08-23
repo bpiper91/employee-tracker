@@ -1,3 +1,6 @@
+// validation function
+const validateString = require('./queries');
+
 // main menu questions
 const mainMenu = [
     {
@@ -42,28 +45,45 @@ const mainMenu = [
 ];
 
 // questions for adding a new department
-const newDeptMenu = [
+const addMenu = [
     {
         type: 'input',
         name: 'deptName',
+        when: (answers) => answers.target === 'department',
         message: 'Adding a department. What is the department called?',
-        validate: (input) => {
-            if (!input) {
-                console.log('Please enter a name.');
-                return false;
-            } else if (input.includes(';')) {
-                console.log('Please do not include semi-colons.');
-                return false;
-            } else if (input.includes('--')) {
-                console.log('Please do not include double dashes.');
-            } else {
-                return true;
-            };
-        }
+        //validate: validateString
+    },
+    {
+        type: 'input',
+        name: 'title',
+        when: (answers) => answers.target === 'role',
+        message: "What is the role's title?",
+        //validate: validateString
+    },
+    {
+        type: 'input',
+        name: 'salary',
+        when: (answers) => answers.target === 'role',
+        message: "What is the role's salary?",
+        ////validate: validateString
+    },
+    {
+        type: 'input',
+        name: 'first_name',
+        when: (answers) => answers.target === 'employee',
+        message: "What is the employee's first name?",
+        //validate: validateString
+    },
+    {
+        type: 'input',
+        name: 'last_name',
+        when: (answers) => answers.target === 'employee',
+        message: "What is the employee's last name?",
+        //validate: validateString
     }
 ];
 
 module.exports = {
     mainMenu,
-    newDeptMenu
+    addMenu
 };
