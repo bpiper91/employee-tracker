@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
-// const db = require('./utils/connection');
 
 // get questions from prompts.js
 const {
@@ -36,6 +35,7 @@ const promptMenu = () => {
         });
 };
 
+// get user input needed to perform selected action
 async function promptData(selection) {
     // Connect to database
     const db = await mysql.createConnection(
@@ -65,27 +65,6 @@ async function promptData(selection) {
         id AS ID 
         FROM departments`;
 
-        // let depts = [];
-
-        // db.promise().query(sql)
-        //     .then(([rows,fields]) => {
-        //         return rows;
-        //     })
-        //     .then((rows) => {
-        //         depts = rows;
-        //         console.log(depts);
-        //     })
-        //     .catch(console.log)
-        //     .then(() => db.end());
-
-        // db.query(sqlDept, (err, rows) => {
-        //     if (err) {
-        //         console.error(err);
-        //     };
-
-        //     depts = rows;
-        // });
-
         const [rows, fields] = await db.execute(sql);
         let depts = rows;
 
@@ -106,7 +85,6 @@ async function promptData(selection) {
             message: "Please choose the corresponding department.",
             choices: deptChoices
         });
-
     };
 
     // if the user will need to choose an employee, get the employees list
@@ -122,14 +100,6 @@ async function promptData(selection) {
 
         const [rows, fields] = await db.execute(sql);
         let emps = rows;
-
-        // db.query(sqlEmp, (err, rows) => {
-        //     if (err) {
-        //         console.error(err);
-        //     };
-
-        //     emps = rows;
-        // });
 
         // create array of employee names and ids
         for (i = 0; i < emps.length; i++) {
@@ -183,14 +153,6 @@ async function promptData(selection) {
 
         const [rows, fields] = await db.execute(sql);
         let roles = rows;
-
-        // db.query(sqlRole, (err, rows) => {
-        //     if (err) {
-        //         console.error(err);
-        //     };
-
-        //     roles = rows;
-        // });
 
         // create array of role titles and ids
         for (i = 0; i < roles.length; i++) {
@@ -302,6 +264,7 @@ async function promptData(selection) {
     };
 };
 
+// execute selected database action
 const dbAction = action => {
     if (action.type === 'show') {
         switch (action.target) {
@@ -360,7 +323,3 @@ const dbAction = action => {
 
 // initialize application
 promptMenu();
-
-
-//  REMAINING PROBLEM: 
-//      1. employees with null managers aren't being shown

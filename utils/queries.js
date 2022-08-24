@@ -16,16 +16,6 @@ const validateString = (input) => {
     };
 };
 
-// // validate user input array
-// const validateArray = (inputArr) => {
-//     newArr = inputArr.filter(validateString);
-//     if (newArr.length !== inputArr.length) {
-//         return false;
-//     } else {
-//         return true;
-//     };
-// };
-
 // view all departments
 async function showDepartments() {
     // Connect to database
@@ -41,22 +31,13 @@ async function showDepartments() {
     const sql = `SELECT 
                 name AS Department,
                 id AS ID 
-                FROM departments`;
+                FROM departments
+                ORDER BY ID ASC`;
 
     const [rows, fields] = await db.execute(sql);
     console.log(`\n`);
     console.table(rows);
     console.log(`\n\n\n\n\n\n\n\n\n`);
-
-    // db.query(sql, (err, results) => {
-    //     if (err) {
-    //         console.error(err);
-    //     };
-
-    //     console.log(`\n`);
-    //     console.table(results);
-    //     console.log(`\n\n\n\n\n\n\n\n`);
-    // });
 };
 
 // view all roles
@@ -77,7 +58,8 @@ async function showRoles() {
                 salary AS Salary
                 FROM roles
                 LEFT JOIN departments
-                ON roles.department_id = departments.id`;
+                ON roles.department_id = departments.id
+                ORDER BY Department ASC, Salary DESC`;
 
     const [rows, fields] = await db.execute(sql);
     console.log(`\n`);
@@ -110,15 +92,14 @@ async function showEmployees() {
                 LEFT JOIN departments
                 ON e.department_id = departments.id
                 LEFT JOIN employees m
-                ON e.manager_id = m.id`;
+                ON e.manager_id = m.id
+                ORDER BY Department ASC, Salary DESC`;
 
     const [rows, fields] = await db.execute(sql);
     console.log(`\n`);
     console.table(rows);
     console.log(`\n\n\n\n\n\n\n\n`);
 };
-
-
 
 module.exports = {
     validateString,

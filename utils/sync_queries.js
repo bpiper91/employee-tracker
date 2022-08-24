@@ -28,12 +28,6 @@ const addDepartment = deptName => {
 
 // add a role
 const addRole = roleArr => {
-    // if (!validateArray(roleArr)) {
-    //     return false;
-    // } else if (!roleArr[0] || !roleArr[1]) {
-    //     return false;
-    // };
-
     const sql = `INSERT INTO roles (title, salary, department_id)
                 VALUES (?, ?, ?)`;
 
@@ -48,12 +42,6 @@ const addRole = roleArr => {
 
 // add an employee
 const addEmployee = employeeArr => {
-    // if (!validateArray(employeeArr)) {
-    //     return false;
-    // } else if (!employeeArr[0] || !employeeArr[1] || !employeeArr[2]) {
-    //     return false;
-    // };
-
     // add 5th parameter if a manager id is included
     if (employeeArr.length === 5) {
         var managerColumn = `, manager_id`;
@@ -82,12 +70,6 @@ const addEmployee = employeeArr => {
 
 // update an employee role
 const updateRole = roleUpdateArr => {
-    // if (!validateArray(roleUpdateArr)) {
-    //     return false;
-    // } else if (!roleUpdateArr[0] || !roleUpdateArr[1]) {
-    //     return false;
-    // };
-
     const sql = `UPDATE employees
                 SET role_id = ?
                 WHERE id = ?`;
@@ -101,9 +83,24 @@ const updateRole = roleUpdateArr => {
     });
 };
 
+// const updateManager = managerUpdateArr => {
+//     const sql = `UPDATE employees
+//                 SET manager_id = ?
+//                 WHERE id = ?`;
+
+//     conn.query(sql, managerUpdateArr, (err, results) => {
+//         if (err) {
+//             console.error(err);
+//         } else {
+//             console.log(`Changed employee's manager.`);
+//         };
+//     });
+// };
+
 module.exports = {
     addDepartment,
     addRole,
     addEmployee,
     updateRole
+    // updateManager
 };
